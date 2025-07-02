@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getItems, createItem, getVendors, updateItem, deleteItem } from '../api';
 import {
   Box, Grid, TextField, Button, Select, MenuItem, InputLabel, FormControl,
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, TableSortLabel, Typography, Card, CardContent, Divider, Autocomplete, InputAdornment
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, TableSortLabel, Typography, Card, CardContent, Divider, Autocomplete, InputAdornment, TablePagination
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -59,10 +59,15 @@ export default function Items() {
   const [deleteId, setDeleteId] = useState(null);
   const [deleteName, setDeleteName] = useState('');
 
+  const [itemPage, setItemPage] = useState(0);
+  const [itemRowsPerPage, setItemRowsPerPage] = useState(10);
+
   useEffect(() => {
     getItems().then(setItems);
     getVendors().then(setVendors);
   }, []);
+
+  useEffect(() => { setItemPage(0); }, [search, order, orderBy]);
 
   // Add modal handlers
   const handleOpen = () => {
@@ -264,7 +269,7 @@ export default function Items() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {sortedItems.map(item => (
+            {sortedItems.slice(itemPage * itemRowsPerPage, itemPage * itemRowsPerPage + itemRowsPerPage).map(item => (
               <TableRow key={item.id}>
                 <TableCell>{item.name}</TableCell>
                 <TableCell>{item.stock}</TableCell>
@@ -277,8 +282,23 @@ export default function Items() {
                 </TableCell>
               </TableRow>
             ))}
+            {sortedItems.length === 0 && (
+              <TableRow><TableCell colSpan={6} align="center">No items found</TableCell></TableRow>
+            )}
           </TableBody>
         </Table>
+        <TablePagination
+          component="div"
+          count={sortedItems.length}
+          page={itemPage}
+          onPageChange={(_, newPage) => setItemPage(newPage)}
+          rowsPerPage={itemRowsPerPage}
+          onRowsPerPageChange={e => {
+            setItemRowsPerPage(parseInt(e.target.value, 10));
+            setItemPage(0);
+          }}
+          rowsPerPageOptions={[10]}
+        />
       </TableContainer>
       {/* Delete Confirmation Dialog */}
       <Dialog open={confirmOpen} onClose={handleDeleteCancel}>

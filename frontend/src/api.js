@@ -136,4 +136,52 @@ export async function updateCustomer(id, data) {
 export async function getCustomerSummary(id) {
   const res = await fetch(`${API_URL}/customers/${id}/summary`);
   return res.json();
+}
+
+export async function updateVendor(id, data) {
+  const res = await fetch(`${API_URL}/vendors/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  return res.json();
+}
+
+export async function deleteVendor(id) {
+  const res = await fetch(`${API_URL}/vendors/${id}`, { method: 'DELETE' });
+  return res.json();
+}
+
+export async function updatePurchaseOrder(id, data) {
+  const res = await fetch(`${API_URL}/purchase-orders/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  return res.json();
+}
+
+export async function deletePurchaseOrder(id) {
+  const res = await fetch(`${API_URL}/purchase-orders/${id}`, { method: 'DELETE' });
+  return res.json();
+}
+
+export async function payCustomerDue(customerId, amount) {
+  const res = await fetch(`${API_URL}/orders/pay-due`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ customerId, amount })
+  });
+  if (!res.ok) throw new Error('Failed to pay due');
+  return res.json();
+}
+
+export async function payVendorDue(vendorId, amount) {
+  const res = await fetch(`${API_URL}/purchase-orders/pay-due`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ vendorId, amount })
+  });
+  if (!res.ok) throw new Error('Failed to pay due');
+  return res.json();
 } 

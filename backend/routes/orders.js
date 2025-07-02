@@ -155,4 +155,26 @@ router.delete('/:id', async (req, res) => {
   res.json(deleted);
 });
 
+// Pay due for a customer
+router.post('/pay-due', async (req, res) => {
+  const { customerId, amount } = req.body;
+  if (!customerId || !amount || amount <= 0) return res.status(400).json({ error: 'Invalid input' });
+  await db.read();
+  let remaining = amount;
+  // Get all orders for this customer, oldest first, with due > 0
+  const orders = (db.data.orders || [])
+    .filter(o => o.customerId === customerId && o.due > 0)
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
+  for (const order of orders) {
+    if (remaining <= 0) break;
+    const pay = Math.min(order.due, remaining);
+    order.paid = (order.paid || 0) + pay;
+    order.due = (order.due || 0) - pay;
+    remaining -= pay;
+  }
+  recalcCustomerDue(db, customerId);
+  await db.write();
+  res.json({ success: true });
+});
+
 module.exports = router; 

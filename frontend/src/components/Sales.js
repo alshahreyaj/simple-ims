@@ -2,12 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { getOrders, createOrder, getItems, getCustomers, createCustomer, updateCustomerDue, deleteOrder, updateOrder } from '../api';
 import {
   Box, Grid, TextField, Button, Select, MenuItem, InputLabel, FormControl,
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Dialog, DialogTitle, DialogContent, DialogActions, Typography, IconButton, Alert, Checkbox, FormControlLabel, Divider, Card, CardContent, Autocomplete
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Dialog, DialogTitle, DialogContent, DialogActions, Typography, IconButton, Alert, Checkbox, FormControlLabel, Divider, Card, CardContent, Autocomplete, TablePagination
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import InfoIcon from '@mui/icons-material/Info';
+import PersonIcon from '@mui/icons-material/Person';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import PhoneIcon from '@mui/icons-material/Phone';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 
 export default function Orders() {
   const [orders, setOrders] = useState([]);
@@ -44,6 +48,12 @@ export default function Orders() {
   });
 
   const [filterCustomer, setFilterCustomer] = useState(null);
+
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const [detailsProductsPage, setDetailsProductsPage] = useState(0);
+  const [detailsProductsRowsPerPage, setDetailsProductsRowsPerPage] = useState(10);
 
   useEffect(() => {
     getOrders().then(setOrders);
@@ -223,9 +233,16 @@ export default function Orders() {
     })
     .filter(order => {
       if (!filterCustomer) return true;
+      if (filterCustomer.id === 'temp') return !!order.tempCustomer;
       return order.customerId === filterCustomer.id;
     })
     .sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  // Pagination logic
+  const paginatedOrders = filteredOrders.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
+  // Reset page when opening/closing details modal or changing detailsOrder
+  useEffect(() => { setDetailsProductsPage(0); }, [detailsOpen, detailsOrder]);
 
   return (
     <Box>
@@ -240,7 +257,7 @@ export default function Orders() {
           sx={{ width: 200 }}
         />
         <Autocomplete
-          options={customers}
+          options={[{ id: 'temp', name: 'Temporary Customers' }, ...customers]}
           getOptionLabel={option => option.name || ''}
           value={filterCustomer}
           onChange={(_, newValue) => setFilterCustomer(newValue)}
@@ -408,44 +425,79 @@ export default function Orders() {
       {/* Order Details Modal */}
       <Dialog open={detailsOpen} onClose={handleCloseDetails} maxWidth="md" fullWidth>
         <DialogTitle>Order Details</DialogTitle>
-        <DialogContent>
+        <DialogContent sx={{ minWidth: { md: 700 } }}>
           {detailsOrder && (
             <Box sx={{ mt: 1 }}>
-              <Typography variant="subtitle1">Customer: <b>{detailsOrder.tempCustomer?.name ? detailsOrder.tempCustomer.name : (customers.find(c => c.id === detailsOrder.customerId)?.name || detailsOrder.customerId)}</b></Typography>
-              <Typography variant="subtitle2">
-                Phone: <b>{detailsOrder.tempCustomer?.mobile ? detailsOrder.tempCustomer.mobile : (customers.find(c => c.id === detailsOrder.customerId)?.phone || '-')}</b>
-              </Typography>
-              <Typography variant="subtitle2">Order Date: {new Date(detailsOrder.date).toLocaleString('en-BD', { hour12: true })}</Typography>
-              <Table size="small" sx={{ mt: 2 }}>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Item</TableCell>
-                    <TableCell>Quantity</TableCell>
-                    <TableCell>Price</TableCell>
-                    <TableCell>Subtotal</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {detailsOrder.items.map(item => {
-                    const price = items.find(i => i.id === item.itemId)?.sellingPrice || 0;
-                    return (
-                      <TableRow key={item.id}>
-                        <TableCell>{items.find(i => i.id === item.itemId)?.name || item.itemId}</TableCell>
-                        <TableCell>{item.quantity}</TableCell>
-                        <TableCell>{price}</TableCell>
-                        <TableCell>{price * item.quantity}</TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-              <Box sx={{ mt: 2 }}>
-                <Typography>Subtotal: <b>{detailsSubtotal}</b></Typography>
-                <Typography>Discount: <b>{detailsOrder.discountType === 'percent' ? `${detailsOrder.discountPercent || ''}% (${detailsDiscount})` : detailsDiscount}</b></Typography>
-                <Typography>Paid: <b>{detailsOrder.paid || 0}</b></Typography>
-                <Typography>Due: <b>{detailsOrder.due || 0}</b></Typography>
-                <Typography>Total: <b>{detailsTotal}</b></Typography>
-              </Box>
+              <Grid container spacing={3} alignItems="stretch">
+                <Grid item xs={12} md={6}>
+                  <Paper variant="outlined" sx={{ p: 2, bgcolor: '#f8fafc', height: '100%' }}>
+                    <Typography variant="h6" sx={{ mb: 1 }}>Customer Info</Typography>
+                    <Typography sx={{ mb: 1 }}>
+                      <b>Name:</b> {detailsOrder.tempCustomer?.name ? detailsOrder.tempCustomer.name : (customers.find(c => c.id === detailsOrder.customerId)?.name || detailsOrder.customerId)}
+                    </Typography>
+                    <Typography sx={{ mb: 1 }}>
+                      <PhoneIcon fontSize="small" sx={{ verticalAlign: 'middle', mr: 0.5 }} />
+                      <b>Phone:</b> {detailsOrder.tempCustomer?.mobile ? detailsOrder.tempCustomer.mobile : (customers.find(c => c.id === detailsOrder.customerId)?.phone || '-')}
+                    </Typography>
+                    <Typography>
+                      <CalendarTodayIcon fontSize="small" sx={{ verticalAlign: 'middle', mr: 0.5 }} />
+                      <b>Date:</b> {new Date(detailsOrder.date).toLocaleString('en-BD', { hour12: true })}
+                    </Typography>
+                  </Paper>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Card variant="outlined" sx={{ p: 2, bgcolor: '#e3f2fd', boxShadow: 2, height: '100%' }}>
+                    <Typography variant="h6" sx={{ mb: 1 }}>Order Summary</Typography>
+                    <Grid container spacing={2} direction="column">
+                      <Grid item xs={12}><Typography><b>Subtotal:</b> {detailsSubtotal}</Typography></Grid>
+                      <Grid item xs={12}><Typography><b>Discount:</b> {detailsOrder.discountType === 'percent' ? `${detailsOrder.discountPercent || ''}% (${detailsDiscount})` : detailsDiscount}</Typography></Grid>
+                      <Grid item xs={12}><Typography><b>Total:</b> {detailsTotal}</Typography></Grid>
+                      <Grid item xs={12}><Typography><b>Paid:</b> {detailsOrder.paid || 0}</Typography></Grid>
+                      <Grid item xs={12}><Typography><b>Due:</b> {detailsOrder.due || 0}</Typography></Grid>
+                      <Grid item xs={12}><Typography><b>Items:</b> {detailsOrder.items.length}</Typography></Grid>
+                    </Grid>
+                  </Card>
+                </Grid>
+              </Grid>
+              <Divider sx={{ my: 3 }} />
+              <Typography variant="h6" sx={{ mb: 1 }}>Products</Typography>
+              <Paper variant="outlined" sx={{ p: 2, bgcolor: '#f9fbe7' }}>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Item</TableCell>
+                      <TableCell>Quantity</TableCell>
+                      <TableCell>Price</TableCell>
+                      <TableCell>Subtotal</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {detailsOrder.items.slice(detailsProductsPage * detailsProductsRowsPerPage, detailsProductsPage * detailsProductsRowsPerPage + detailsProductsRowsPerPage).map(item => {
+                      const price = items.find(i => i.id === item.itemId)?.sellingPrice || 0;
+                      return (
+                        <TableRow key={item.id}>
+                          <TableCell>{items.find(i => i.id === item.itemId)?.name || item.itemId}</TableCell>
+                          <TableCell>{item.quantity}</TableCell>
+                          <TableCell>{price}</TableCell>
+                          <TableCell>{price * item.quantity}</TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+                <TablePagination
+                  component="div"
+                  count={detailsOrder.items.length}
+                  page={detailsProductsPage}
+                  onPageChange={(_, newPage) => setDetailsProductsPage(newPage)}
+                  rowsPerPage={detailsProductsRowsPerPage}
+                  onRowsPerPageChange={e => {
+                    setDetailsProductsRowsPerPage(parseInt(e.target.value, 10));
+                    setDetailsProductsPage(0);
+                  }}
+                  rowsPerPageOptions={[10]}
+                />
+              </Paper>
             </Box>
           )}
         </DialogContent>
@@ -459,30 +511,30 @@ export default function Orders() {
             <TableRow>
               <TableCell>Order Date</TableCell>
               <TableCell>Customer</TableCell>
-              <TableCell>Paid</TableCell>
-              <TableCell>Discount</TableCell>
               <TableCell>Total</TableCell>
+              <TableCell>Paid</TableCell>
+              <TableCell>Due</TableCell>
               <TableCell align="center">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredOrders.map(order => {
+            {paginatedOrders.map(order => {
               const customer = customers.find(c => c.id === order.customerId);
-              let discountDisplay = order.discount;
-              if (order.discountType === 'percent') {
-                discountDisplay = `${order.discountPercent || ''}% (${order.discount})`;
-              }
               return (
                 <TableRow key={order.id}>
                   <TableCell>{new Date(order.date).toLocaleString('en-BD', { hour12: true })}</TableCell>
                   <TableCell>
-                    {order.tempCustomer?.name
-                      ? order.tempCustomer.name
-                      : (customer ? customer.name : order.customerId)}
+                    {order.tempCustomer?.name ? (
+                      <>
+                        {order.tempCustomer.name}
+                      </>
+                    ) : (
+                      customer ? <><PersonIcon fontSize="small" color="info" sx={{ verticalAlign: 'middle', mr: 0.5 }} />{customer.name}</> : order.customerId
+                    )}
                   </TableCell>
-                  <TableCell>{order.paid}</TableCell>
-                  <TableCell>{discountDisplay}</TableCell>
                   <TableCell>{order.total != null ? `৳${order.total}` : '৳0'}</TableCell>
+                  <TableCell>{order.paid != null ? `৳${order.paid}` : ''}</TableCell>
+                  <TableCell>{order.due != null ? `৳${order.due}` : ''}</TableCell>
                   <TableCell align="center">
                     <IconButton color="primary" onClick={() => handleEditOrder(order)}><EditIcon /></IconButton>
                     <IconButton color="info" onClick={() => handleShowDetails(order)}><InfoIcon /></IconButton>
@@ -496,6 +548,18 @@ export default function Orders() {
           </TableBody>
         </Table>
       </TableContainer>
+      <TablePagination
+        component="div"
+        count={filteredOrders.length}
+        page={page}
+        onPageChange={(_, newPage) => setPage(newPage)}
+        rowsPerPage={rowsPerPage}
+        onRowsPerPageChange={e => {
+          setRowsPerPage(parseInt(e.target.value, 10));
+          setPage(0);
+        }}
+        rowsPerPageOptions={[10]}
+      />
       {/* Delete Order Confirmation Dialog */}
       <Dialog open={deleteOpen} onClose={handleDeleteOrderCancel}>
         <DialogTitle>Delete Order</DialogTitle>

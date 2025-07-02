@@ -3,8 +3,8 @@
     {
       "id": "1751455710257",
       "name": "Coca cola",
-      "stock": 47,
-      "vendorId": null,
+      "stock": 49,
+      "vendorId": "1751468362589",
       "buyingPrice": 20,
       "sellingPrice": 25
     },
@@ -19,22 +19,50 @@
   ],
   "customers": [
     {
-      "id": "1751447037414",
-      "name": "abul",
-      "due": 0,
-      "phone": "2121",
-      "address": "BD"
-    },
-    {
       "id": "1751460805257",
       "name": "Reyaj",
       "phone": "1224",
       "address": "DHAKA",
-      "due": 44
+      "due": 0
+    },
+    {
+      "id": "1751474122154",
+      "name": "Al Shahreyaj",
+      "phone": "01865977883",
+      "address": "Dhaka",
+      "due": 0
     }
   ],
-  "vendors": [],
-  "purchaseOrders": [],
+  "vendors": [
+    {
+      "id": "1751468362589",
+      "name": "Al Shahreyaj",
+      "address": "Dhaka",
+      "phone": "01865977883",
+      "totalPurchase": 36,
+      "dueAmount": 0
+    }
+  ],
+  "purchaseOrders": [
+    {
+      "id": "1751470276469",
+      "vendorId": "1751468362589",
+      "products": [
+        {
+          "itemId": "1751455710257",
+          "quantity": 2
+        }
+      ],
+      "subtotal": 40,
+      "discount": "10",
+      "discountType": "percent",
+      "discountNum": 4,
+      "totalBuyAmount": 36,
+      "payAmount": 36,
+      "dueAmount": 0,
+      "date": "2025-07-02T15:34:15.726Z"
+    }
+  ],
   "orders": [
     {
       "id": "1751461567973",
@@ -53,8 +81,8 @@
       ],
       "discount": 6,
       "discountType": "percent",
-      "paid": 20,
-      "due": 29,
+      "paid": 49,
+      "due": 0,
       "date": "2025-07-02T13:06:07.973Z",
       "tempCustomer": null,
       "total": 49,
@@ -72,8 +100,8 @@
       ],
       "discount": 0,
       "discountType": "amount",
-      "paid": 10,
-      "due": 15,
+      "paid": 25,
+      "due": 0,
       "date": "2025-07-02T13:10:49.865Z",
       "tempCustomer": null,
       "total": 25,
