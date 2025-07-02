@@ -14,6 +14,7 @@ import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Alert from '@mui/material/Alert';
 import PaymentIcon from '@mui/icons-material/Payment';
+import Snackbar from '@mui/material/Snackbar';
 
 export default function Vendors() {
   const [vendors, setVendors] = useState([]);
@@ -34,7 +35,7 @@ export default function Vendors() {
   const [selectedVendor, setSelectedVendor] = useState(null);
   const [vendorProducts, setVendorProducts] = useState([]);
   const [vendorPurchaseOrders, setVendorPurchaseOrders] = useState([]);
-  const [alert, setAlert] = useState({ open: false, message: '', severity: 'error' });
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'error' });
   const [payDueOpen, setPayDueOpen] = useState(false);
   const [payDueVendor, setPayDueVendor] = useState(null);
   const [payDueAmount, setPayDueAmount] = useState('');
@@ -92,7 +93,7 @@ export default function Vendors() {
   const handleDelete = async () => {
     if (vendorToDelete && vendorToDelete.dueAmount && Number(vendorToDelete.dueAmount) !== 0) {
       setDeleteDialogOpen(false);
-      setAlert({ open: true, message: 'Cannot delete vendor with due amount not zero.', severity: 'error' });
+      setSnackbar({ open: true, message: 'Cannot delete vendor with due amount not zero.', severity: 'error' });
       setVendorToDelete(null);
       return;
     }
@@ -139,7 +140,8 @@ export default function Vendors() {
     const allItems = await getItems();
     setVendorProducts(allItems.filter(i => i.vendorId === vendor.id));
     const allPOs = await getPurchaseOrders();
-    setVendorPurchaseOrders(allPOs.filter(po => po.vendorId === vendor.id));
+    const sortedVendorPurchaseOrders = [...allPOs.filter(po => po.vendorId === vendor.id)].sort((a, b) => new Date(b.date) - new Date(a.date));
+    setVendorPurchaseOrders(sortedVendorPurchaseOrders);
   };
 
   const handleCloseInfoModal = () => {
@@ -166,11 +168,11 @@ export default function Vendors() {
     if (!payDueVendor || !payDueAmount) return;
     try {
       await payVendorDue(payDueVendor.id, Number(payDueAmount));
-      setAlert({ open: true, message: 'Due paid successfully', severity: 'success' });
+      setSnackbar({ open: true, message: 'Due paid successfully', severity: 'success' });
       getVendors().then(setVendors);
       handlePayDueClose();
     } catch (err) {
-      setAlert({ open: true, message: 'Failed to pay due', severity: 'error' });
+      setSnackbar({ open: true, message: 'Failed to pay due', severity: 'error' });
     }
   };
 
@@ -246,8 +248,8 @@ export default function Vendors() {
                 <TableCell>{vendor.name}</TableCell>
                 <TableCell>{vendor.address}</TableCell>
                 <TableCell>{vendor.phone}</TableCell>
-                <TableCell>{vendor.totalPurchase}</TableCell>
-                <TableCell>{vendor.dueAmount}</TableCell>
+                <TableCell>{vendor.totalPurchase != null ? `৳${vendor.totalPurchase}` : ''}</TableCell>
+                <TableCell>{vendor.dueAmount != null ? `৳${vendor.dueAmount}` : ''}</TableCell>
                 <TableCell align="center">
                   <IconButton color="primary" onClick={() => handleOpenModal(vendor)}><EditIcon /></IconButton>
                   <IconButton color="error" onClick={() => { setVendorToDelete(vendor); setDeleteDialogOpen(true); }}><DeleteIcon /></IconButton>
@@ -305,13 +307,6 @@ export default function Vendors() {
         </DialogActions>
       </Dialog>
 
-      {/* Alert for delete error */}
-      {alert.open && (
-        <Alert severity={alert.severity} onClose={() => setAlert({ ...alert, open: false })} sx={{ mt: 2 }}>
-          {alert.message}
-        </Alert>
-      )}
-
       {/* Info Modal with Tabs */}
       <Dialog open={infoModalOpen} onClose={handleCloseInfoModal} maxWidth="md" fullWidth>
         <DialogTitle>Vendor Details: {selectedVendor?.name}</DialogTitle>
@@ -363,8 +358,8 @@ export default function Vendors() {
                       <TableRow key={item.id}>
                         <TableCell>{item.name}</TableCell>
                         <TableCell>{item.stock}</TableCell>
-                        <TableCell>{item.buyingPrice}</TableCell>
-                        <TableCell>{item.sellingPrice}</TableCell>
+                        <TableCell>{`৳${item.buyingPrice}`}</TableCell>
+                        <TableCell>{`৳${item.sellingPrice}`}</TableCell>
                       </TableRow>
                     ))}
                     {vendorProducts.length === 0 && (
@@ -459,6 +454,17 @@ export default function Vendors() {
           </Box>
         </DialogContent>
       </Dialog>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert severity={snackbar.severity} onClose={() => setSnackbar({ ...snackbar, open: false })} sx={{ width: '100%' }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 } 

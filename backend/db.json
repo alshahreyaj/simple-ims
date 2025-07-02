@@ -1,7 +1,138 @@
 {
-  "items": [],
-  "customers": [],
-  "vendors": [],
-  "purchaseOrders": [],
-  "orders": []
+  "items": [
+    {
+      "id": "1751477002009",
+      "name": "Coca cola 250ml",
+      "stock": 49,
+      "vendorId": "1751476932245",
+      "buyingPrice": 20,
+      "sellingPrice": 25
+    },
+    {
+      "id": "1751477027856",
+      "name": "Mr twist",
+      "stock": 20,
+      "vendorId": "1751476932245",
+      "buyingPrice": 18,
+      "sellingPrice": 25
+    },
+    {
+      "id": "1751477111044",
+      "name": "Mango",
+      "stock": 10,
+      "vendorId": null,
+      "buyingPrice": 75,
+      "sellingPrice": 110
+    },
+    {
+      "id": "1751477644489",
+      "name": "Oil 1L",
+      "stock": 4,
+      "vendorId": "1751477478090",
+      "buyingPrice": 180,
+      "sellingPrice": 220
+    }
+  ],
+  "customers": [
+    {
+      "id": "1751476890085",
+      "name": "Rose",
+      "phone": "1234567",
+      "address": "Dhaka",
+      "due": 0
+    },
+    {
+      "id": "1751476918038",
+      "name": "Ontor",
+      "phone": "112233",
+      "address": "Noakhali",
+      "due": 13
+    }
+  ],
+  "vendors": [
+    {
+      "id": "1751476932245",
+      "name": "Pran Co",
+      "address": "BD",
+      "phone": "4455",
+      "totalPurchase": 1260,
+      "dueAmount": 0
+    },
+    {
+      "id": "1751477478090",
+      "name": "Uniliver",
+      "address": "",
+      "phone": "",
+      "totalPurchase": 810,
+      "dueAmount": 290
+    }
+  ],
+  "purchaseOrders": [
+    {
+      "id": "1751477161207",
+      "vendorId": "1751476932245",
+      "products": [
+        {
+          "itemId": "1751477002009",
+          "quantity": 50
+        },
+        {
+          "itemId": "1751477027856",
+          "quantity": 20
+        }
+      ],
+      "subtotal": 1000,
+      "discount": "100",
+      "discountType": "amount",
+      "discountNum": 100,
+      "totalBuyAmount": 1260,
+      "payAmount": 1260,
+      "dueAmount": 0,
+      "date": "2025-07-02T17:26:43.064Z"
+    },
+    {
+      "id": "1751477686994",
+      "vendorId": "1751477478090",
+      "products": [
+        {
+          "itemId": "1751477644489",
+          "quantity": 5
+        }
+      ],
+      "subtotal": 900,
+      "discount": "10",
+      "discountType": "percent",
+      "discountNum": 90,
+      "totalBuyAmount": 810,
+      "payAmount": 520,
+      "dueAmount": 290,
+      "date": "2025-07-02T17:34:46.994Z"
+    }
+  ],
+  "orders": [
+    {
+      "id": "1751477770966",
+      "customerId": "1751476918038",
+      "items": [
+        {
+          "itemId": "1751477002009",
+          "quantity": 1,
+          "price": 25
+        },
+        {
+          "itemId": "1751477644489",
+          "quantity": 1,
+          "price": 220
+        }
+      ],
+      "discount": 12,
+      "discountType": "percent",
+      "paid": 220,
+      "due": 13,
+      "date": "2025-07-02T17:36:10.966Z",
+      "tempCustomer": null,
+      "total": 233,
+      "discountPercent": "5"
+    }
+  ]
 }

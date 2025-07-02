@@ -153,6 +153,15 @@ export default function PurchaseOrders() {
     })
     .sort((a, b) => new Date(b.date) - new Date(a.date));
 
+  // Calculate correct subtotal for PO details modal
+  const detailsSubtotal = detailsPO && items.length > 0
+    ? detailsPO.products.reduce((sum, prod) => {
+        const item = items.find(i => i.id === prod.itemId);
+        const price = item ? Number(item.buyingPrice) : 0;
+        return sum + price * (Number(prod.quantity) || 0);
+      }, 0)
+    : 0;
+
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2, gap: 2, flexWrap: 'wrap' }}>
@@ -367,7 +376,7 @@ export default function PurchaseOrders() {
                   <Card variant="outlined" sx={{ p: 2, bgcolor: '#e3f2fd', boxShadow: 2, height: '100%' }}>
                     <Typography variant="h6" sx={{ mb: 1 }}>Summary</Typography>
                     <Grid container spacing={2} direction="column">
-                      <Grid item xs={12}><Typography><b>Subtotal:</b> ৳{detailsPO.subtotal != null ? detailsPO.subtotal : ''}</Typography></Grid>
+                      <Grid item xs={12}><Typography><b>Subtotal:</b> ৳{detailsSubtotal}</Typography></Grid>
                       <Grid item xs={12}><Typography><b>Discount:</b> {detailsPO.discountType === 'percent' ? `${detailsPO.discount || 0}% (${detailsPO.discountNum || 0})` : detailsPO.discount}</Typography></Grid>
                       <Grid item xs={12}><Typography><b>Total:</b> ৳{detailsPO.totalBuyAmount}</Typography></Grid>
                       <Grid item xs={12}><Typography><b>Paid:</b> ৳{detailsPO.payAmount}</Typography></Grid>

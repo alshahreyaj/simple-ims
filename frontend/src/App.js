@@ -11,8 +11,8 @@ import CssBaseline from '@mui/material/CssBaseline';
 import theme from './theme';
 
 const tabLabels = [
-  { label: 'Items', icon: <InventoryIcon fontSize="small" /> },
-  { label: 'Orders' },
+  { label: 'Orders', icon: <InventoryIcon fontSize="small" /> },
+  { label: 'Items' },
   { label: 'Customers' },
   { label: 'Vendors' },
   { label: 'Purchase Orders' }
@@ -57,8 +57,8 @@ function App() {
                 ))}
               </Tabs>
               <Box>
-                {tab === 0 && <Items />}
-                {tab === 1 && <Orders />}
+                {tab === 0 && <Orders />}
+                {tab === 1 && <Items />}
                 {tab === 2 && <Customers ref={customersRef} />}
                 {tab === 3 && <Vendors />}
                 {tab === 4 && <PurchaseOrders />}

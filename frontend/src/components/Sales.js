@@ -315,8 +315,8 @@ export default function Orders() {
                             inputProps={{ min: 1 }}
                           />
                         </TableCell>
-                        <TableCell>{price}</TableCell>
-                        <TableCell>{price * oi.quantity}</TableCell>
+                        <TableCell>{`৳${price}`}</TableCell>
+                        <TableCell>{`৳${price * oi.quantity}`}</TableCell>
                         <TableCell>
                           <IconButton color="error" onClick={() => handleRemoveOrderItem(idx)} disabled={orderItems.length === 1}>
                             <DeleteIcon />
@@ -407,11 +407,11 @@ export default function Orders() {
             <Card variant="outlined" sx={{ mb: 2, p: 2, bgcolor: '#f5f6fa' }}>
               <CardContent>
                 <Grid container spacing={2}>
-                  <Grid item xs={6} sm={3}><Typography>Subtotal: <b>{subtotal}</b></Typography></Grid>
-                  <Grid item xs={6} sm={3}><Typography>Discount: <b>{discountNum} {discountType === 'percent' ? `(${discount || 0}%)` : ''}</b></Typography></Grid>
-                  <Grid item xs={6} sm={3}><Typography>Paid: <b>{paidNum}</b></Typography></Grid>
-                  <Grid item xs={6} sm={3}><Typography>Due: <b>{dueNum}</b></Typography></Grid>
-                  <Grid item xs={12} sm={12}><Typography>Total: <b>{total}</b></Typography></Grid>
+                  <Grid item xs={6} sm={3}><Typography>Subtotal: <b>৳{subtotal}</b></Typography></Grid>
+                  <Grid item xs={6} sm={3}><Typography>Discount: <b>৳{discountNum} {discountType === 'percent' ? `(${discount || 0}%)` : ''}</b></Typography></Grid>
+                  <Grid item xs={6} sm={3}><Typography>Paid: <b>৳{paidNum}</b></Typography></Grid>
+                  <Grid item xs={6} sm={3}><Typography>Due: <b>৳{dueNum}</b></Typography></Grid>
+                  <Grid item xs={12} sm={12}><Typography>Total: <b>৳{total}</b></Typography></Grid>
                 </Grid>
               </CardContent>
             </Card>
@@ -449,11 +449,11 @@ export default function Orders() {
                   <Card variant="outlined" sx={{ p: 2, bgcolor: '#e3f2fd', boxShadow: 2, height: '100%' }}>
                     <Typography variant="h6" sx={{ mb: 1 }}>Order Summary</Typography>
                     <Grid container spacing={2} direction="column">
-                      <Grid item xs={12}><Typography><b>Subtotal:</b> {detailsSubtotal}</Typography></Grid>
-                      <Grid item xs={12}><Typography><b>Discount:</b> {detailsOrder.discountType === 'percent' ? `${detailsOrder.discountPercent || ''}% (${detailsDiscount})` : detailsDiscount}</Typography></Grid>
-                      <Grid item xs={12}><Typography><b>Total:</b> {detailsTotal}</Typography></Grid>
-                      <Grid item xs={12}><Typography><b>Paid:</b> {detailsOrder.paid || 0}</Typography></Grid>
-                      <Grid item xs={12}><Typography><b>Due:</b> {detailsOrder.due || 0}</Typography></Grid>
+                      <Grid item xs={12}><Typography><b>Subtotal:</b> ৳{detailsSubtotal}</Typography></Grid>
+                      <Grid item xs={12}><Typography><b>Discount:</b> {detailsOrder.discountType === 'percent' ? `${detailsOrder.discountPercent || ''}% (৳${detailsDiscount})` : `৳${detailsDiscount}`}</Typography></Grid>
+                      <Grid item xs={12}><Typography><b>Total:</b> ৳{detailsTotal}</Typography></Grid>
+                      <Grid item xs={12}><Typography><b>Paid:</b> ৳{detailsOrder.paid || 0}</Typography></Grid>
+                      <Grid item xs={12}><Typography><b>Due:</b> ৳{detailsOrder.due || 0}</Typography></Grid>
                       <Grid item xs={12}><Typography><b>Items:</b> {detailsOrder.items.length}</Typography></Grid>
                     </Grid>
                   </Card>
@@ -478,8 +478,8 @@ export default function Orders() {
                         <TableRow key={item.id}>
                           <TableCell>{items.find(i => i.id === item.itemId)?.name || item.itemId}</TableCell>
                           <TableCell>{item.quantity}</TableCell>
-                          <TableCell>{price}</TableCell>
-                          <TableCell>{price * item.quantity}</TableCell>
+                          <TableCell>{`৳${price}`}</TableCell>
+                          <TableCell>{`৳${price * item.quantity}`}</TableCell>
                         </TableRow>
                       );
                     })}

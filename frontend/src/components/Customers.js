@@ -240,7 +240,7 @@ const Customers = forwardRef((props, ref) => {
                 <TableCell>{customer.name}</TableCell>
                 <TableCell>{customer.phone || ''}</TableCell>
                 <TableCell>{customer.address || ''}</TableCell>
-                <TableCell>{customer.due}</TableCell>
+                <TableCell>{customer.due != null ? `৳${customer.due}` : ''}</TableCell>
                 <TableCell align="center">
                   <IconButton color="primary" onClick={() => handleModalOpen(customer)}><EditIcon /></IconButton>
                   <IconButton color="error" onClick={() => handleDelete(customer)}><DeleteIcon /></IconButton>
@@ -394,8 +394,15 @@ const Customers = forwardRef((props, ref) => {
           </Box>
         </DialogContent>
       </Dialog>
-      <Snackbar open={snackbar.open} autoHideDuration={3000} onClose={() => setSnackbar({ ...snackbar, open: false })}>
-        <Alert severity={snackbar.severity} onClose={() => setSnackbar({ ...snackbar, open: false })}>{snackbar.message}</Alert>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert severity={snackbar.severity} onClose={() => setSnackbar({ ...snackbar, open: false })}>
+          {snackbar.message}
+        </Alert>
       </Snackbar>
     </Box>
   );
