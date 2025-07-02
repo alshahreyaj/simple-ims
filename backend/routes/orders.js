@@ -46,8 +46,17 @@ router.post('/', async (req, res) => {
     const item = db.data.items.find(i => i.id === oi.itemId);
     item.stock -= oi.quantity;
   }
+  // Add name and unit to each item
+  const itemsWithDetails = items.map(oi => {
+    const item = db.data.items.find(i => i.id === oi.itemId) || {};
+    return {
+      ...oi,
+      name: oi.name || item.name || '',
+      unit: oi.unit || item.measurementType || ''
+    };
+  });
   // Calculate total using oi.price from frontend
-  const itemsTotal = (items || []).reduce((sum, oi) => {
+  const itemsTotal = (itemsWithDetails || []).reduce((sum, oi) => {
     return sum + ((oi.price || 0) * oi.quantity);
   }, 0);
   let calcDiscount = discount || 0;
@@ -59,7 +68,7 @@ router.post('/', async (req, res) => {
   const order = {
     id: Date.now().toString(),
     customerId,
-    items,
+    items: itemsWithDetails,
     discount: discount || 0,
     discountType: discountType || 'amount',
     paid: paid || 0,
@@ -115,8 +124,17 @@ router.put('/:id', async (req, res) => {
     const item = db.data.items.find(i => i.id === oi.itemId);
     item.stock -= oi.quantity;
   }
+  // Add name and unit to each item
+  const itemsWithDetails = items.map(oi => {
+    const item = db.data.items.find(i => i.id === oi.itemId) || {};
+    return {
+      ...oi,
+      name: oi.name || item.name || '',
+      unit: oi.unit || item.measurementType || ''
+    };
+  });
   // Calculate total using oi.price from frontend
-  const itemsTotal = (items || []).reduce((sum, oi) => {
+  const itemsTotal = (itemsWithDetails || []).reduce((sum, oi) => {
     return sum + ((oi.price || 0) * oi.quantity);
   }, 0);
   let calcDiscount = discount || 0;
@@ -128,6 +146,7 @@ router.put('/:id', async (req, res) => {
   db.data.orders[idx] = {
     ...db.data.orders[idx],
     ...req.body,
+    items: itemsWithDetails,
     total,
   };
   if (discountType === 'percent' && discountPercent !== undefined) {

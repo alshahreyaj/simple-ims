@@ -4,6 +4,7 @@ import Orders from './components/Sales';
 import Customers from './components/Customers';
 import Vendors from './components/Vendors';
 import PurchaseOrders from './components/PurchaseOrders';
+import DiscountManagement from './components/DiscountManagement';
 import { AppBar, Toolbar, Typography, Tabs, Tab, Container, Box, Paper } from '@mui/material';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import { ThemeProvider } from '@mui/material/styles';
@@ -15,7 +16,8 @@ const tabLabels = [
   { label: 'Items' },
   { label: 'Customers' },
   { label: 'Vendors' },
-  { label: 'Purchase Orders' }
+  { label: 'Purchase Orders' },
+  { label: 'Discounts' }
 ];
 
 function App() {
@@ -62,6 +64,7 @@ function App() {
                 {tab === 2 && <Customers ref={customersRef} />}
                 {tab === 3 && <Vendors />}
                 {tab === 4 && <PurchaseOrders />}
+                {tab === 5 && <DiscountManagement />}
               </Box>
             </Paper>
           </Box>

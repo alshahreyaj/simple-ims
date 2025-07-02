@@ -5,6 +5,7 @@ const ordersRouter = require('./routes/orders');
 const customersRouter = require('./routes/customers');
 const vendorsRouter = require('./routes/vendors');
 const purchaseOrdersRouter = require('./routes/purchaseOrders');
+const discountsRouter = require('./routes/discounts');
 
 const app = express();
 app.use(cors());
@@ -20,6 +21,7 @@ app.use('/api/orders', ordersRouter);
 app.use('/api/customers', customersRouter);
 app.use('/api/vendors', vendorsRouter);
 app.use('/api/purchase-orders', purchaseOrdersRouter);
+app.use('/api/discounts', discountsRouter);
 
 const PORT = 4000;
 app.listen(PORT, () => {

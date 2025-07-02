@@ -151,6 +151,18 @@ export default function Orders() {
       setError('Please select all items and enter valid quantities.');
       return;
     }
+    // Check for out-of-stock items
+    const outOfStockItems = orderItems.filter(oi => {
+      const item = items.find(i => i.id === oi.itemId);
+      return !item || Number(item.stock) < Number(oi.quantity);
+    });
+    if (outOfStockItems.length > 0) {
+      setError('Insufficient stock for: ' + outOfStockItems.map(oi => {
+        const item = items.find(i => i.id === oi.itemId);
+        return item ? item.name : oi.itemId;
+      }).join(', '));
+      return;
+    }
     if (!customerId && !(useTempCustomer && tempCustomer.name)) {
       setError('Please select a customer or enter temporary customer info.');
       return;
@@ -171,7 +183,16 @@ export default function Orders() {
     }
     const orderData = {
       customerId: useTempCustomer ? undefined : finalCustomerId,
-      items: orderItems.map(oi => ({ itemId: oi.itemId, quantity: oi.quantity, price: oi.price })),
+      items: orderItems.map(oi => {
+        const item = items.find(i => i.id === oi.itemId) || {};
+        return {
+          itemId: oi.itemId,
+          quantity: oi.quantity,
+          price: oi.price,
+          name: item.name || '',
+          unit: item.measurementType || ''
+        };
+      }),
       discount: discountNum,
       discountType,
       paid: orderPaid,
@@ -217,10 +238,7 @@ export default function Orders() {
   };
 
   // Calculate detailsSubtotal above the return
-  const detailsSubtotal = detailsOrder ? detailsOrder.items.reduce((sum, item) => {
-    const price = items.find(i => i.id === item.itemId)?.sellingPrice || 0;
-    return sum + price * item.quantity;
-  }, 0) : 0;
+  const detailsSubtotal = detailsOrder ? detailsOrder.items.reduce((sum, item) => sum + (item.price * item.quantity), 0) : 0;
   const detailsDiscount = detailsOrder ? Number(detailsOrder.discount) || 0 : 0;
   const detailsTotal = detailsSubtotal - detailsDiscount;
 
@@ -475,17 +493,14 @@ export default function Orders() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {detailsOrder.items.slice(detailsProductsPage * detailsProductsRowsPerPage, detailsProductsPage * detailsProductsRowsPerPage + detailsProductsRowsPerPage).map(item => {
-                      const price = items.find(i => i.id === item.itemId)?.sellingPrice || 0;
-                      return (
-                        <TableRow key={item.id}>
-                          <TableCell>{items.find(i => i.id === item.itemId)?.name || item.itemId}</TableCell>
-                          <TableCell>{item ? `${item.quantity} ${items.find(i => i.id === item.itemId)?.measurementType || ''}` : item.quantity}</TableCell>
-                          <TableCell>{`৳${price}`}</TableCell>
-                          <TableCell>{`৳${price * item.quantity}`}</TableCell>
-                        </TableRow>
-                      );
-                    })}
+                    {detailsOrder.items.slice(detailsProductsPage * detailsProductsRowsPerPage, detailsProductsPage * detailsProductsRowsPerPage + detailsProductsRowsPerPage).map(item => (
+                      <TableRow key={item.itemId}>
+                        <TableCell>{item.name || item.itemId}</TableCell>
+                        <TableCell>{`${item.quantity} ${item.unit || ''}`}</TableCell>
+                        <TableCell>{`৳${item.price}`}</TableCell>
+                        <TableCell>{`৳${item.price * item.quantity}`}</TableCell>
+                      </TableRow>
+                    ))}
                   </TableBody>
                 </Table>
                 <TablePagination

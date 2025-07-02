@@ -50,6 +50,7 @@ export default function Items() {
   const [buyingPrice, setBuyingPrice] = useState('');
   const [sellingPrice, setSellingPrice] = useState('');
   const [measurementType, setMeasurementType] = useState('pcs');
+  const [originalPrice, setOriginalPrice] = useState('');
 
   // Search and sort state
   const [search, setSearch] = useState('');
@@ -70,6 +71,30 @@ export default function Items() {
 
   useEffect(() => { setItemPage(0); }, [search, order, orderBy]);
 
+  // Add a function to calculate and set selling price live
+  const calculateSellingPrice = (origPrice, id) => {
+    let discounts = [];
+    try {
+      discounts = JSON.parse(localStorage.getItem('discounts') || '[]');
+    } catch {}
+    let maxDiscountAmount = 0;
+    for (const d of discounts) {
+      if (d.productIds === 'all' || (Array.isArray(d.productIds) && d.productIds.includes(id))) {
+        let discountAmount = 0;
+        if (d.type === 'percent') {
+          discountAmount = Number(origPrice) * (d.value / 100);
+        } else if (d.type === 'amount') {
+          discountAmount = Number(d.value);
+        }
+        discountAmount = Math.min(discountAmount, Number(origPrice));
+        if (discountAmount > maxDiscountAmount) {
+          maxDiscountAmount = discountAmount;
+        }
+      }
+    }
+    setSellingPrice(Math.max(0, Number(origPrice) - maxDiscountAmount));
+  };
+
   // Add modal handlers
   const handleOpen = () => {
     setEditId(null);
@@ -77,6 +102,7 @@ export default function Items() {
     setStock('');
     setVendorId('');
     setBuyingPrice('');
+    setOriginalPrice('');
     setSellingPrice('');
     setMeasurementType('pcs');
     setModalOpen(true);
@@ -84,12 +110,36 @@ export default function Items() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name || stock === '') return;
+    if (!name || stock === '' || originalPrice === '') return;
+    // Fetch discounts from localStorage or API if needed
+    let discounts = [];
+    try {
+      discounts = JSON.parse(localStorage.getItem('discounts') || '[]');
+    } catch {}
+    // Find all applicable discounts for this product
+    let maxDiscountAmount = 0;
+    let newSellingPrice = Number(originalPrice);
+    for (const d of discounts) {
+      if (d.productIds === 'all' || (Array.isArray(d.productIds) && d.productIds.includes(editId))) {
+        let discountAmount = 0;
+        if (d.type === 'percent') {
+          discountAmount = Number(originalPrice) * (d.value / 100);
+        } else if (d.type === 'amount') {
+          discountAmount = Number(d.value);
+        }
+        // Don't allow discount greater than original price
+        discountAmount = Math.min(discountAmount, Number(originalPrice));
+        if (discountAmount > maxDiscountAmount) {
+          maxDiscountAmount = discountAmount;
+        }
+      }
+    }
+    newSellingPrice = Math.max(0, Number(originalPrice) - maxDiscountAmount);
     if (editId) {
-      const updated = await updateItem(editId, { name, stock, vendorId, buyingPrice, sellingPrice, measurementType });
+      const updated = await updateItem(editId, { name, stock, vendorId, buyingPrice, originalPrice, sellingPrice: newSellingPrice, measurementType });
       setItems(items.map(i => i.id === editId ? updated : i));
     } else {
-      const item = await createItem({ name, stock, vendorId, buyingPrice, sellingPrice, measurementType });
+      const item = await createItem({ name, stock, vendorId, buyingPrice, originalPrice, sellingPrice: newSellingPrice, measurementType });
       setItems([...items, item]);
     }
     handleClose();
@@ -102,9 +152,10 @@ export default function Items() {
     setStock(item.stock);
     setVendorId(item.vendorId || '');
     setBuyingPrice(item.buyingPrice || '');
-    setSellingPrice(item.sellingPrice || '');
+    setOriginalPrice(item.originalPrice || item.sellingPrice || '');
     setMeasurementType(item.measurementType || 'pcs');
     setModalOpen(true);
+    calculateSellingPrice(item.originalPrice || item.sellingPrice || '', item.id);
   };
 
   const handleClose = () => {
@@ -114,6 +165,7 @@ export default function Items() {
     setStock('');
     setVendorId('');
     setBuyingPrice('');
+    setOriginalPrice('');
     setSellingPrice('');
     setMeasurementType('pcs');
   };
@@ -157,6 +209,13 @@ export default function Items() {
   });
   const sortedItems = stableSort(filteredItems, getComparator(order, orderBy, vendors));
 
+  // Add useEffect to recalculate selling price when originalPrice or editId changes
+  useEffect(() => {
+    if (modalOpen && originalPrice !== '') {
+      calculateSellingPrice(originalPrice, editId);
+    }
+  }, [originalPrice, editId, modalOpen]);
+
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2, gap: 2, flexWrap: 'wrap' }}>
@@ -199,6 +258,12 @@ export default function Items() {
                     </Select>
                   </FormControl>
                 </Grid>
+                <Grid item xs={12} sm={4}>
+                  <TextField label="Original Price" type="number" value={originalPrice} onChange={e => { setOriginalPrice(e.target.value); calculateSellingPrice(e.target.value, editId); }} fullWidth size="small" required />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <TextField label="Selling Price (auto)" type="number" value={sellingPrice} fullWidth size="small" InputProps={{ readOnly: true }} />
+                </Grid>
               </Grid>
             </Paper>
             <Paper variant="outlined" sx={{ mb: 2, p: 2 }}>
@@ -206,11 +271,6 @@ export default function Items() {
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
                   <TextField label="Buying Price" type="number" value={buyingPrice} onChange={e => setBuyingPrice(e.target.value)} fullWidth size="small"
-                    InputProps={{ startAdornment: <InputAdornment position="start">৳</InputAdornment> }}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField label="Selling Price" type="number" value={sellingPrice} onChange={e => setSellingPrice(e.target.value)} fullWidth size="small"
                     InputProps={{ startAdornment: <InputAdornment position="start">৳</InputAdornment> }}
                   />
                 </Grid>
@@ -265,6 +325,15 @@ export default function Items() {
                   Buying Price
                 </TableSortLabel>
               </TableCell>
+              <TableCell sortDirection={orderBy === 'originalPrice' ? order : false}>
+                <TableSortLabel
+                  active={orderBy === 'originalPrice'}
+                  direction={orderBy === 'originalPrice' ? order : 'asc'}
+                  onClick={() => handleRequestSort('originalPrice')}
+                >
+                  Original Price
+                </TableSortLabel>
+              </TableCell>
               <TableCell sortDirection={orderBy === 'sellingPrice' ? order : false}>
                 <TableSortLabel
                   active={orderBy === 'sellingPrice'}
@@ -292,6 +361,7 @@ export default function Items() {
                 <TableCell>{item.name}</TableCell>
                 <TableCell>{item.stock} {item.measurementType || 'pcs'}</TableCell>
                 <TableCell>{item.buyingPrice ? `৳${item.buyingPrice}` : ''}</TableCell>
+                <TableCell>{item.originalPrice ? `৳${item.originalPrice}` : ''}</TableCell>
                 <TableCell>{item.sellingPrice ? `৳${item.sellingPrice}` : ''}</TableCell>
                 <TableCell>{vendors.find(v => v.id === item.vendorId)?.name || ''}</TableCell>
                 <TableCell align="center">

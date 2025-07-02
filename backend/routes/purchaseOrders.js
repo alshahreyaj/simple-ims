@@ -26,7 +26,7 @@ router.post('/', async (req, res) => {
     const qty = Number(p.quantity);
     if (isNaN(qty) || qty <= 0) return res.status(400).json({ error: 'Invalid quantity' });
     item.stock += qty;
-    subtotal += (Number(item.buyingPrice) || 0) * qty;
+    subtotal += (Number(p.buyingPrice) || 0) * qty;
   }
   let discountNum = 0;
   if (discountType === 'percent') {
@@ -44,7 +44,7 @@ router.post('/', async (req, res) => {
   const po = {
     id: Date.now().toString(),
     vendorId,
-    products: products.map(p => ({ itemId: p.itemId, quantity: Number(p.quantity) })),
+    products: products.map(p => ({ itemId: p.itemId, quantity: Number(p.quantity), buyingPrice: Number(p.buyingPrice) || 0 })),
     subtotal,
     discount,
     discountType,
@@ -92,7 +92,7 @@ router.put('/:id', async (req, res) => {
     const qty = Number(p.quantity);
     if (isNaN(qty) || qty <= 0) return res.status(400).json({ error: 'Invalid quantity' });
     item.stock += qty;
-    subtotal += (Number(item.buyingPrice) || 0) * qty;
+    subtotal += (Number(p.buyingPrice) || 0) * qty;
   }
   let discountNum = 0;
   if (discountType === 'percent') {
@@ -108,7 +108,7 @@ router.put('/:id', async (req, res) => {
   vendor.totalPurchase = (Number(vendor.totalPurchase) || 0) + totalBuyAmount;
   // Update PO
   po.vendorId = vendorId;
-  po.products = products.map(p => ({ itemId: p.itemId, quantity: Number(p.quantity) }));
+  po.products = products.map(p => ({ itemId: p.itemId, quantity: Number(p.quantity), buyingPrice: Number(p.buyingPrice) || 0 }));
   po.totalBuyAmount = totalBuyAmount;
   po.payAmount = paid;
   po.dueAmount = due;

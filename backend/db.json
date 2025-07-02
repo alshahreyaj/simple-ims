@@ -1,49 +1,24 @@
 {
   "items": [
     {
-      "id": "1751477002009",
-      "name": "Coca cola 250ml",
-      "stock": 49,
+      "id": "1751485394623",
+      "name": "Coca Cola ",
+      "stock": 97,
       "vendorId": "1751476932245",
-      "buyingPrice": 20,
-      "sellingPrice": 25,
+      "buyingPrice": 10,
+      "sellingPrice": 12.5,
+      "originalPrice": 25,
       "measurementType": "pcs"
     },
     {
-      "id": "1751477027856",
+      "id": "1751485454100",
       "name": "Mr twist",
-      "stock": 20,
-      "vendorId": "1751476932245",
-      "buyingPrice": 18,
-      "sellingPrice": 25,
-      "measurementType": "pcs"
-    },
-    {
-      "id": "1751477111044",
-      "name": "Mango",
-      "stock": 21.3,
-      "vendorId": "",
-      "buyingPrice": 75,
-      "sellingPrice": 110,
-      "measurementType": "kg"
-    },
-    {
-      "id": "1751477644489",
-      "name": "Oil 1L",
-      "stock": 4,
+      "stock": 0,
       "vendorId": "1751477478090",
-      "buyingPrice": 180,
-      "sellingPrice": 220,
+      "buyingPrice": 15,
+      "sellingPrice": 9,
+      "originalPrice": 20,
       "measurementType": "pcs"
-    },
-    {
-      "id": "1751479873934",
-      "name": "alu",
-      "stock": 21.9,
-      "vendorId": "1751480336087",
-      "buyingPrice": 20,
-      "sellingPrice": 35,
-      "measurementType": "kg"
     }
   ],
   "customers": [
@@ -52,14 +27,14 @@
       "name": "Rose",
       "phone": "1234567",
       "address": "Dhaka",
-      "due": 0
+      "due": 30
     },
     {
       "id": "1751476918038",
       "name": "Ontor",
       "phone": "112233",
       "address": "Noakhali",
-      "due": 145
+      "due": 25
     }
   ],
   "vendors": [
@@ -68,128 +43,125 @@
       "name": "Pran Co",
       "address": "BD",
       "phone": "4455",
-      "totalPurchase": 1260,
-      "dueAmount": 0
+      "totalPurchase": 2000,
+      "dueAmount": 1000
     },
     {
       "id": "1751477478090",
       "name": "Uniliver",
       "address": "",
       "phone": "",
-      "totalPurchase": 810,
-      "dueAmount": 290
+      "totalPurchase": 0,
+      "dueAmount": 0
     },
     {
       "id": "1751480336087",
       "name": "Local",
       "address": "",
       "phone": "",
-      "totalPurchase": 28,
-      "dueAmount": 28
+      "totalPurchase": 0,
+      "dueAmount": 0
     }
   ],
   "purchaseOrders": [
     {
-      "id": "1751477161207",
+      "id": "1751485583937",
       "vendorId": "1751476932245",
       "products": [
         {
-          "itemId": "1751477002009",
-          "quantity": 50
-        },
-        {
-          "itemId": "1751477027856",
-          "quantity": 20
+          "itemId": "1751485394623",
+          "quantity": 100,
+          "buyingPrice": 20
         }
       ],
-      "subtotal": 1000,
-      "discount": "100",
-      "discountType": "amount",
-      "discountNum": 100,
-      "totalBuyAmount": 1260,
-      "payAmount": 1260,
-      "dueAmount": 0,
-      "date": "2025-07-02T17:26:43.064Z"
-    },
-    {
-      "id": "1751477686994",
-      "vendorId": "1751477478090",
-      "products": [
-        {
-          "itemId": "1751477644489",
-          "quantity": 5
-        }
-      ],
-      "subtotal": 900,
-      "discount": "10",
-      "discountType": "percent",
-      "discountNum": 90,
-      "totalBuyAmount": 810,
-      "payAmount": 520,
-      "dueAmount": 290,
-      "date": "2025-07-02T17:34:46.994Z"
-    },
-    {
-      "id": "1751480403466",
-      "vendorId": "1751480336087",
-      "products": [
-        {
-          "itemId": "1751479873934",
-          "quantity": 1.4
-        }
-      ],
-      "subtotal": 28,
+      "subtotal": 2000,
       "discount": "",
       "discountType": "amount",
       "discountNum": 0,
-      "totalBuyAmount": 28,
-      "payAmount": 0,
-      "dueAmount": 28,
-      "date": "2025-07-02T18:20:03.466Z"
+      "totalBuyAmount": 2000,
+      "payAmount": 1000,
+      "dueAmount": 1000,
+      "date": "2025-07-02T19:46:23.937Z"
     }
   ],
   "orders": [
     {
-      "id": "1751477770966",
+      "id": "1751485596154",
       "customerId": "1751476918038",
       "items": [
         {
-          "itemId": "1751477002009",
+          "itemId": "1751485394623",
           "quantity": 1,
-          "price": 25
-        },
-        {
-          "itemId": "1751477644489",
-          "quantity": 1,
-          "price": 220
-        }
-      ],
-      "discount": 12,
-      "discountType": "percent",
-      "paid": 220,
-      "due": 13,
-      "date": "2025-07-02T17:36:10.966Z",
-      "tempCustomer": null,
-      "total": 233,
-      "discountPercent": "5"
-    },
-    {
-      "id": "1751480364624",
-      "customerId": "1751476918038",
-      "items": [
-        {
-          "itemId": "1751477111044",
-          "quantity": 1.2,
-          "price": 110
+          "price": 25,
+          "name": "Coca Cola ",
+          "unit": "pcs"
         }
       ],
       "discount": 0,
       "discountType": "amount",
       "paid": 0,
-      "due": 132,
-      "date": "2025-07-02T18:19:24.624Z",
+      "due": 25,
+      "date": "2025-07-02T19:46:36.154Z",
       "tempCustomer": null,
-      "total": 132
+      "total": 25
+    },
+    {
+      "id": "1751485696433",
+      "customerId": "1751476890085",
+      "items": [
+        {
+          "itemId": "1751485394623",
+          "quantity": 1,
+          "price": 22.5,
+          "name": "Coca Cola ",
+          "unit": "pcs"
+        }
+      ],
+      "discount": 0,
+      "discountType": "amount",
+      "paid": 0,
+      "due": 22.5,
+      "date": "2025-07-02T19:48:16.433Z",
+      "tempCustomer": null,
+      "total": 22.5
+    },
+    {
+      "id": "1751485962741",
+      "customerId": "1751476890085",
+      "items": [
+        {
+          "itemId": "1751485394623",
+          "quantity": 1,
+          "price": 12.5,
+          "name": "Coca Cola ",
+          "unit": "pcs"
+        }
+      ],
+      "discount": 5,
+      "discountType": "amount",
+      "paid": 0,
+      "due": 7.5,
+      "date": "2025-07-02T19:52:42.741Z",
+      "tempCustomer": null,
+      "total": 7.5
+    }
+  ],
+  "discounts": [
+    {
+      "id": "1751485728547",
+      "name": "D",
+      "type": "percent",
+      "value": 50,
+      "productIds": "all",
+      "createdAt": "2025-07-02T19:48:48.547Z"
+    },
+    {
+      "id": "1751485898049",
+      "name": "D2",
+      "type": "amount",
+      "value": 11,
+      "productIds": "all",
+      "createdAt": "2025-07-02T19:51:38.049Z"
     }
   ]
 }

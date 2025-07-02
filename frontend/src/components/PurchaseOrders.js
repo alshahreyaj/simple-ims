@@ -81,8 +81,11 @@ export default function PurchaseOrders() {
 
   // Calculate total buy amount
   const subtotal = products.reduce((sum, p) => {
-    const item = items.find(i => i.id === p.itemId);
-    return sum + (item && p.quantity ? Number(item.buyingPrice) * Number(p.quantity) : 0);
+    const price = typeof p.buyingPrice !== 'undefined' ? Number(p.buyingPrice) : (() => {
+      const item = items.find(i => i.id === p.itemId);
+      return item ? Number(item.buyingPrice) : 0;
+    })();
+    return sum + (p.quantity ? price * Number(p.quantity) : 0);
   }, 0);
   let discountNum = 0;
   if (discountType === 'percent') {
@@ -97,7 +100,7 @@ export default function PurchaseOrders() {
     setEditMode(true);
     setEditId(po.id);
     setSelectedVendor(po.vendorId);
-    setProducts(po.products.map(p => ({ itemId: p.itemId, quantity: p.quantity })));
+    setProducts(po.products.map(p => ({ itemId: p.itemId, quantity: p.quantity, buyingPrice: p.buyingPrice })));
     setPayAmount(po.payAmount || '');
     setDiscount(po.discount || '');
     setDiscountType(po.discountType || 'amount');
@@ -117,14 +120,22 @@ export default function PurchaseOrders() {
   const handleCreate = async e => {
     e.preventDefault();
     if (!selectedVendor || products.some(p => !p.itemId || !p.quantity)) return;
+    const productsWithPrice = products.map(p => {
+      const item = items.find(i => i.id === p.itemId) || {};
+      return {
+        itemId: p.itemId,
+        quantity: p.quantity,
+        buyingPrice: item.buyingPrice || 0
+      };
+    });
     if (editMode && editId) {
       // Update existing PO
-      const po = await updatePurchaseOrder(editId, { vendorId: selectedVendor, products, payAmount, discount, discountType });
-      setPurchaseOrders(purchaseOrders.map(p => p.id === editId ? po : p));
+      const po = await updatePurchaseOrder(editId, { vendorId: selectedVendor, products: productsWithPrice, payAmount, discount, discountType });
+      setPurchaseOrders(p => p.map(poItem => poItem.id === editId ? po : poItem));
     } else {
       // Create new PO
-      const po = await createPurchaseOrder({ vendorId: selectedVendor, products, payAmount, discount, discountType });
-      setPurchaseOrders([...purchaseOrders, po]);
+      const po = await createPurchaseOrder({ vendorId: selectedVendor, products: productsWithPrice, payAmount, discount, discountType });
+      setPurchaseOrders(p => [...p, po]);
     }
     setEditMode(false);
     setEditId(null);
@@ -157,7 +168,7 @@ export default function PurchaseOrders() {
   const detailsSubtotal = detailsPO && items.length > 0
     ? detailsPO.products.reduce((sum, prod) => {
         const item = items.find(i => i.id === prod.itemId);
-        const price = item ? Number(item.buyingPrice) : 0;
+        const price = typeof prod.buyingPrice !== 'undefined' ? Number(prod.buyingPrice) : (item ? Number(item.buyingPrice) : 0);
         return sum + price * (Number(prod.quantity) || 0);
       }, 0)
     : 0;
@@ -224,7 +235,7 @@ export default function PurchaseOrders() {
                 <TableBody>
                   {products.map((p, idx) => {
                     const item = items.find(i => i.id === p.itemId);
-                    const price = item ? Number(item.buyingPrice) : 0;
+                    const price = typeof p.buyingPrice !== 'undefined' ? Number(p.buyingPrice) : (item ? Number(item.buyingPrice) : 0);
                     const subtotal = price * (Number(p.quantity) || 0);
                     return (
                       <TableRow key={idx}>
@@ -404,7 +415,7 @@ export default function PurchaseOrders() {
                   <TableBody>
                     {detailsPO.products.slice(detailsProductsPage * detailsProductsRowsPerPage, detailsProductsPage * detailsProductsRowsPerPage + detailsProductsRowsPerPage).map((prod, idx) => {
                       const item = items.find(i => i.id === prod.itemId);
-                      const price = item ? Number(item.buyingPrice) : 0;
+                      const price = typeof prod.buyingPrice !== 'undefined' ? Number(prod.buyingPrice) : (item ? Number(item.buyingPrice) : 0);
                       const subtotal = price * (Number(prod.quantity) || 0);
                       return (
                         <TableRow key={idx}>
