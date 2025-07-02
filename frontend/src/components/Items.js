@@ -49,6 +49,7 @@ export default function Items() {
   const [vendorId, setVendorId] = useState('');
   const [buyingPrice, setBuyingPrice] = useState('');
   const [sellingPrice, setSellingPrice] = useState('');
+  const [measurementType, setMeasurementType] = useState('pcs');
 
   // Search and sort state
   const [search, setSearch] = useState('');
@@ -77,6 +78,7 @@ export default function Items() {
     setVendorId('');
     setBuyingPrice('');
     setSellingPrice('');
+    setMeasurementType('pcs');
     setModalOpen(true);
   };
 
@@ -84,10 +86,10 @@ export default function Items() {
     e.preventDefault();
     if (!name || stock === '') return;
     if (editId) {
-      const updated = await updateItem(editId, { name, stock, vendorId, buyingPrice, sellingPrice });
+      const updated = await updateItem(editId, { name, stock, vendorId, buyingPrice, sellingPrice, measurementType });
       setItems(items.map(i => i.id === editId ? updated : i));
     } else {
-      const item = await createItem({ name, stock, vendorId, buyingPrice, sellingPrice });
+      const item = await createItem({ name, stock, vendorId, buyingPrice, sellingPrice, measurementType });
       setItems([...items, item]);
     }
     handleClose();
@@ -101,6 +103,7 @@ export default function Items() {
     setVendorId(item.vendorId || '');
     setBuyingPrice(item.buyingPrice || '');
     setSellingPrice(item.sellingPrice || '');
+    setMeasurementType(item.measurementType || 'pcs');
     setModalOpen(true);
   };
 
@@ -112,6 +115,7 @@ export default function Items() {
     setVendorId('');
     setBuyingPrice('');
     setSellingPrice('');
+    setMeasurementType('pcs');
   };
 
   const handleDeleteRequest = (id, name) => {
@@ -175,11 +179,25 @@ export default function Items() {
             <Paper variant="outlined" sx={{ mb: 2, p: 2 }}>
               <Typography variant="h6" sx={{ mb: 2 }}>Product Info</Typography>
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={4}>
                   <TextField label="Name" value={name} onChange={e => setName(e.target.value)} fullWidth size="small" required autoFocus />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={4}>
                   <TextField label="Stock" type="number" value={stock} onChange={e => setStock(e.target.value)} fullWidth size="small" required />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <FormControl fullWidth size="small">
+                    <InputLabel>Unit</InputLabel>
+                    <Select value={measurementType} label="Unit" onChange={e => setMeasurementType(e.target.value)}>
+                      <MenuItem value="pcs">pcs</MenuItem>
+                      <MenuItem value="kg">kg</MenuItem>
+                      <MenuItem value="g">g</MenuItem>
+                      <MenuItem value="L">L</MenuItem>
+                      <MenuItem value="ml">ml</MenuItem>
+                      <MenuItem value="box">box</MenuItem>
+                      <MenuItem value="bag">bag</MenuItem>
+                    </Select>
+                  </FormControl>
                 </Grid>
               </Grid>
             </Paper>
@@ -272,7 +290,7 @@ export default function Items() {
             {sortedItems.slice(itemPage * itemRowsPerPage, itemPage * itemRowsPerPage + itemRowsPerPage).map(item => (
               <TableRow key={item.id}>
                 <TableCell>{item.name}</TableCell>
-                <TableCell>{item.stock}</TableCell>
+                <TableCell>{item.stock} {item.measurementType || 'pcs'}</TableCell>
                 <TableCell>{item.buyingPrice ? `৳${item.buyingPrice}` : ''}</TableCell>
                 <TableCell>{item.sellingPrice ? `৳${item.sellingPrice}` : ''}</TableCell>
                 <TableCell>{vendors.find(v => v.id === item.vendorId)?.name || ''}</TableCell>

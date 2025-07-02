@@ -357,7 +357,7 @@ export default function Vendors() {
                     {vendorProducts.slice(productsPage * productsRowsPerPage, productsPage * productsRowsPerPage + productsRowsPerPage).map(item => (
                       <TableRow key={item.id}>
                         <TableCell>{item.name}</TableCell>
-                        <TableCell>{item.stock}</TableCell>
+                        <TableCell>{item.stock} {item.measurementType || ''}</TableCell>
                         <TableCell>{`৳${item.buyingPrice}`}</TableCell>
                         <TableCell>{`৳${item.sellingPrice}`}</TableCell>
                       </TableRow>

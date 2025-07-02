@@ -10,7 +10,7 @@ router.get('/', async (req, res) => {
 
 // Create new item
 router.post('/', async (req, res) => {
-  const { name, stock, vendorId, buyingPrice, sellingPrice } = req.body;
+  const { name, stock, vendorId, buyingPrice, sellingPrice, measurementType } = req.body;
   if (!name || stock == null) return res.status(400).json({ error: 'Name and stock required' });
   await db.read();
   const newItem = {
@@ -19,7 +19,8 @@ router.post('/', async (req, res) => {
     stock: Number(stock),
     vendorId: vendorId || null,
     buyingPrice: buyingPrice != null ? Number(buyingPrice) : null,
-    sellingPrice: sellingPrice != null ? Number(sellingPrice) : null
+    sellingPrice: sellingPrice != null ? Number(sellingPrice) : null,
+    measurementType: measurementType || 'pcs'
   };
   db.data.items.push(newItem);
   await db.write();
@@ -29,7 +30,7 @@ router.post('/', async (req, res) => {
 // Update item (name, prices, vendor, etc.)
 router.put('/:id', async (req, res) => {
   const { id } = req.params;
-  const { name, stock, vendorId, buyingPrice, sellingPrice } = req.body;
+  const { name, stock, vendorId, buyingPrice, sellingPrice, measurementType } = req.body;
   await db.read();
   const item = db.data.items.find(i => i.id === id);
   if (!item) return res.status(404).json({ error: 'Item not found' });
@@ -38,6 +39,7 @@ router.put('/:id', async (req, res) => {
   if (vendorId !== undefined) item.vendorId = vendorId;
   if (buyingPrice !== undefined) item.buyingPrice = Number(buyingPrice);
   if (sellingPrice !== undefined) item.sellingPrice = Number(sellingPrice);
+  if (measurementType !== undefined) item.measurementType = measurementType;
   await db.write();
   res.json(item);
 });

@@ -6,7 +6,8 @@
       "stock": 49,
       "vendorId": "1751476932245",
       "buyingPrice": 20,
-      "sellingPrice": 25
+      "sellingPrice": 25,
+      "measurementType": "pcs"
     },
     {
       "id": "1751477027856",
@@ -14,15 +15,17 @@
       "stock": 20,
       "vendorId": "1751476932245",
       "buyingPrice": 18,
-      "sellingPrice": 25
+      "sellingPrice": 25,
+      "measurementType": "pcs"
     },
     {
       "id": "1751477111044",
       "name": "Mango",
-      "stock": 10,
-      "vendorId": null,
+      "stock": 21.3,
+      "vendorId": "",
       "buyingPrice": 75,
-      "sellingPrice": 110
+      "sellingPrice": 110,
+      "measurementType": "kg"
     },
     {
       "id": "1751477644489",
@@ -30,7 +33,17 @@
       "stock": 4,
       "vendorId": "1751477478090",
       "buyingPrice": 180,
-      "sellingPrice": 220
+      "sellingPrice": 220,
+      "measurementType": "pcs"
+    },
+    {
+      "id": "1751479873934",
+      "name": "alu",
+      "stock": 21.9,
+      "vendorId": "1751480336087",
+      "buyingPrice": 20,
+      "sellingPrice": 35,
+      "measurementType": "kg"
     }
   ],
   "customers": [
@@ -46,7 +59,7 @@
       "name": "Ontor",
       "phone": "112233",
       "address": "Noakhali",
-      "due": 13
+      "due": 145
     }
   ],
   "vendors": [
@@ -65,6 +78,14 @@
       "phone": "",
       "totalPurchase": 810,
       "dueAmount": 290
+    },
+    {
+      "id": "1751480336087",
+      "name": "Local",
+      "address": "",
+      "phone": "",
+      "totalPurchase": 28,
+      "dueAmount": 28
     }
   ],
   "purchaseOrders": [
@@ -107,6 +128,24 @@
       "payAmount": 520,
       "dueAmount": 290,
       "date": "2025-07-02T17:34:46.994Z"
+    },
+    {
+      "id": "1751480403466",
+      "vendorId": "1751480336087",
+      "products": [
+        {
+          "itemId": "1751479873934",
+          "quantity": 1.4
+        }
+      ],
+      "subtotal": 28,
+      "discount": "",
+      "discountType": "amount",
+      "discountNum": 0,
+      "totalBuyAmount": 28,
+      "payAmount": 0,
+      "dueAmount": 28,
+      "date": "2025-07-02T18:20:03.466Z"
     }
   ],
   "orders": [
@@ -133,6 +172,24 @@
       "tempCustomer": null,
       "total": 233,
       "discountPercent": "5"
+    },
+    {
+      "id": "1751480364624",
+      "customerId": "1751476918038",
+      "items": [
+        {
+          "itemId": "1751477111044",
+          "quantity": 1.2,
+          "price": 110
+        }
+      ],
+      "discount": 0,
+      "discountType": "amount",
+      "paid": 0,
+      "due": 132,
+      "date": "2025-07-02T18:19:24.624Z",
+      "tempCustomer": null,
+      "total": 132
     }
   ]
 }

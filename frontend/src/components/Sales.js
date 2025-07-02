@@ -312,7 +312,10 @@ export default function Orders() {
                             size="small"
                             fullWidth
                             required
-                            inputProps={{ min: 1 }}
+                            inputProps={{ min: 0.01, step: 0.01 }}
+                            InputProps={{
+                              endAdornment: item && item.measurementType ? <span style={{ marginLeft: 4 }}>{item.measurementType}</span> : null
+                            }}
                           />
                         </TableCell>
                         <TableCell>{`৳${price}`}</TableCell>
@@ -477,7 +480,7 @@ export default function Orders() {
                       return (
                         <TableRow key={item.id}>
                           <TableCell>{items.find(i => i.id === item.itemId)?.name || item.itemId}</TableCell>
-                          <TableCell>{item.quantity}</TableCell>
+                          <TableCell>{item ? `${item.quantity} ${items.find(i => i.id === item.itemId)?.measurementType || ''}` : item.quantity}</TableCell>
                           <TableCell>{`৳${price}`}</TableCell>
                           <TableCell>{`৳${price * item.quantity}`}</TableCell>
                         </TableRow>

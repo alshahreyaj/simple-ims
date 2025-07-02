@@ -248,7 +248,10 @@ export default function PurchaseOrders() {
                             size="small"
                             fullWidth
                             required
-                            inputProps={{ min: 1 }}
+                            inputProps={{ min: 0.01, step: 0.01 }}
+                            InputProps={{
+                              endAdornment: item && item.measurementType ? <span style={{ marginLeft: 4 }}>{item.measurementType}</span> : null
+                            }}
                           />
                         </TableCell>
                         <TableCell>{price ? `৳${price}` : ''}</TableCell>
@@ -406,7 +409,7 @@ export default function PurchaseOrders() {
                       return (
                         <TableRow key={idx}>
                           <TableCell>{item ? item.name : prod.itemId}</TableCell>
-                          <TableCell>{prod.quantity}</TableCell>
+                          <TableCell>{prod.quantity} {item && item.measurementType ? item.measurementType : ''}</TableCell>
                           <TableCell>{price ? `৳${price}` : ''}</TableCell>
                           <TableCell>{subtotal ? `৳${subtotal}` : ''}</TableCell>
                         </TableRow>
