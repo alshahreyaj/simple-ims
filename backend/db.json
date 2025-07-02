@@ -1,0 +1,103 @@
+{
+  "items": [
+    {
+      "id": "1751455710257",
+      "name": "Coca cola",
+      "stock": 47,
+      "vendorId": null,
+      "buyingPrice": 20,
+      "sellingPrice": 25
+    },
+    {
+      "id": "1751455722465",
+      "name": "Fanta",
+      "stock": 19,
+      "vendorId": null,
+      "buyingPrice": 22,
+      "sellingPrice": 30
+    }
+  ],
+  "customers": [
+    {
+      "id": "1751447037414",
+      "name": "abul",
+      "due": 0,
+      "phone": "2121",
+      "address": "BD"
+    },
+    {
+      "id": "1751460805257",
+      "name": "Reyaj",
+      "phone": "1224",
+      "address": "DHAKA",
+      "due": 44
+    }
+  ],
+  "vendors": [],
+  "purchaseOrders": [],
+  "orders": [
+    {
+      "id": "1751461567973",
+      "customerId": "1751460805257",
+      "items": [
+        {
+          "itemId": "1751455710257",
+          "quantity": 1,
+          "price": 25
+        },
+        {
+          "itemId": "1751455722465",
+          "quantity": 1,
+          "price": 30
+        }
+      ],
+      "discount": 6,
+      "discountType": "percent",
+      "paid": 20,
+      "due": 29,
+      "date": "2025-07-02T13:06:07.973Z",
+      "tempCustomer": null,
+      "total": 49,
+      "discountPercent": "10"
+    },
+    {
+      "id": "1751461849865",
+      "customerId": "1751460805257",
+      "items": [
+        {
+          "itemId": "1751455710257",
+          "quantity": 1,
+          "price": 25
+        }
+      ],
+      "discount": 0,
+      "discountType": "amount",
+      "paid": 10,
+      "due": 15,
+      "date": "2025-07-02T13:10:49.865Z",
+      "tempCustomer": null,
+      "total": 25,
+      "discountPercent": ""
+    },
+    {
+      "id": "1751463181007",
+      "items": [
+        {
+          "itemId": "1751455710257",
+          "quantity": 1,
+          "price": 25
+        }
+      ],
+      "discount": 10,
+      "discountType": "amount",
+      "paid": 15,
+      "due": 0,
+      "date": "2025-07-02T13:33:01.007Z",
+      "tempCustomer": {
+        "name": "abir",
+        "mobile": "1234"
+      },
+      "total": 15
+    }
+  ]
+}
