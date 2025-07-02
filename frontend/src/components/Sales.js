@@ -536,8 +536,8 @@ export default function Orders() {
                   <TableCell>{order.paid != null ? `৳${order.paid}` : ''}</TableCell>
                   <TableCell>{order.due != null ? `৳${order.due}` : ''}</TableCell>
                   <TableCell align="center">
-                    <IconButton color="primary" onClick={() => handleEditOrder(order)}><EditIcon /></IconButton>
                     <IconButton color="info" onClick={() => handleShowDetails(order)}><InfoIcon /></IconButton>
+                    <IconButton color="primary" onClick={() => handleEditOrder(order)}><EditIcon /></IconButton>
                     {(order.id || order.date) && (
                       <IconButton color="error" onClick={() => handleDeleteOrderRequest(order)}><DeleteIcon /></IconButton>
                     )}

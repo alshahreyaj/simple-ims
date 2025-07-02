@@ -251,9 +251,9 @@ export default function Vendors() {
                 <TableCell>{vendor.totalPurchase != null ? `৳${vendor.totalPurchase}` : ''}</TableCell>
                 <TableCell>{vendor.dueAmount != null ? `৳${vendor.dueAmount}` : ''}</TableCell>
                 <TableCell align="center">
+                  <IconButton color="info" onClick={() => handleOpenInfoModal(vendor)}><InfoIcon /></IconButton>
                   <IconButton color="primary" onClick={() => handleOpenModal(vendor)}><EditIcon /></IconButton>
                   <IconButton color="error" onClick={() => { setVendorToDelete(vendor); setDeleteDialogOpen(true); }}><DeleteIcon /></IconButton>
-                  <IconButton color="info" onClick={() => handleOpenInfoModal(vendor)}><InfoIcon /></IconButton>
                   {vendor.dueAmount > 0 && (
                     <IconButton color="success" onClick={() => handlePayDueOpen(vendor)} title="Pay Due">
                       <PaymentIcon />

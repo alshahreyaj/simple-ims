@@ -242,9 +242,9 @@ const Customers = forwardRef((props, ref) => {
                 <TableCell>{customer.address || ''}</TableCell>
                 <TableCell>{customer.due != null ? `৳${customer.due}` : ''}</TableCell>
                 <TableCell align="center">
+                  <IconButton color="info" onClick={() => handleShowOrders(customer)}><ListAltIcon /></IconButton>
                   <IconButton color="primary" onClick={() => handleModalOpen(customer)}><EditIcon /></IconButton>
                   <IconButton color="error" onClick={() => handleDelete(customer)}><DeleteIcon /></IconButton>
-                  <IconButton color="info" onClick={() => handleShowOrders(customer)}><ListAltIcon /></IconButton>
                   {customer.due > 0 && (
                     <IconButton color="success" onClick={() => handlePayDueOpen(customer)} title="Pay Due">
                       <PaymentIcon />
